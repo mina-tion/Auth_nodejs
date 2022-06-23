@@ -20,8 +20,8 @@ class authController {
 			if (!errors.isEmpty()) {
 				return res.status(400).json('Помилка при реєстрації', errors);
 			}
-			const { username, password } = req.body;
-			const candidate = await User.findOne({ username });
+			const { email, password } = req.body;
+			const candidate = await User.findOne({ email });
 			if (candidate) {
 				return res
 					.status(400)
@@ -30,7 +30,7 @@ class authController {
 			const hashPassword = bcrypt.hashSync(password, 7);
 			const userRole = await Role.findOne({ value: 'USER' });
 			const user = new User({
-				username,
+				email,
 				password: hashPassword,
 				roles: [userRole.value],
 			});
@@ -43,8 +43,8 @@ class authController {
 	}
 	async login(req, res) {
 		try {
-			const { username, password } = req.body;
-			const user = await User.findOne({ username });
+			const { email, password } = req.body;
+			const user = await User.findOne({ email });
 			if (!user) {
 				res.status(400).json({ message: 'Користувача не знайдено' });
 			}
