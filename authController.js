@@ -18,7 +18,7 @@ class authController {
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				console.log(errors)
+				console.log(errors);
 				return res.status(400).json({ message: 'Помилка при валідації' });
 			}
 			const { email, password } = req.body;
@@ -34,7 +34,7 @@ class authController {
 				email,
 				password: hashPassword,
 				roles: [userRole.value],
-				bookmarks: { genres: [], authors: []}
+				bookmarks: { genres: [], authors: [] },
 			});
 			await user.save();
 			return res.json({ message: 'Користувача зареєстровано' });
@@ -70,24 +70,19 @@ class authController {
 	}
 
 	async getBookmarks(req, res) {
+		const { email, bookmarks } = req.body;
 
 		try {
 			const user = await User.findOne({ email });
+
 			if (!user) {
 				res.status(400).json({ message: 'Користувача не знайдено' });
 			}
-			const bookmarks = user.bookmarks;
-			return res.json({ bookmarks });
-		} catch (error) {}
-	}
 
-	
-	async getBookmarks(req, res) {
-		const { email } = req.body;
-		try {
-			const user = await User.findOne({ email });
-			if (!user) {
-				res.status(400).json({ message: 'Користувача не знайдено' });
+			if (bookmarks) {
+				if (JSON.stringify(bookmarks) !== JSON.stringify(user.bookmarks)) {
+					user.bookmarks = bookmarks;
+				}
 			}
 			const uBookmarks = user.bookmarks;
 			return res.json({ uBookmarks });
