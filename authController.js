@@ -18,7 +18,8 @@ class authController {
 		try {
 			const errors = validationResult(req);
 			if (!errors.isEmpty()) {
-				return res.status(400).json('Помилка при реєстрації', errors);
+				console.log(errors)
+				return res.status(400).json({ message: 'Помилка при валідації' });
 			}
 			const { email, password } = req.body;
 			const candidate = await User.findOne({ email });
@@ -38,7 +39,7 @@ class authController {
 			return res.json({ message: 'Користувача зареєстровано' });
 		} catch (error) {
 			console.log(error);
-			res.status(400).json({ message: 'Registration error' });
+			res.status(400).json({ message: 'Помилка при реєстрації' });
 		}
 	}
 	async login(req, res) {
@@ -53,11 +54,10 @@ class authController {
 				res.status(400).json({ message: 'Невірний пароль' });
 			}
 			const token = generateAccessToken(user._id, user.roles);
-			return res.json({ token });
+			return res.json({ token, email });
 		} catch (error) {
 			console.log(error);
-
-			res.status(400).json({ message: 'Login error' });
+			res.status(400).json({ message: 'Login error' }, error);
 		}
 	}
 	async getUsers(req, res) {
