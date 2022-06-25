@@ -34,6 +34,7 @@ class authController {
 				email,
 				password: hashPassword,
 				roles: [userRole.value],
+				bookmarks: { genres: [], authors: []}
 			});
 			await user.save();
 			return res.json({ message: 'Користувача зареєстровано' });
@@ -57,7 +58,7 @@ class authController {
 			return res.json({ token, email });
 		} catch (error) {
 			console.log(error);
-			res.status(400).json({ message: 'Login error' }, error);
+			res.status(400).json({ message: 'Login error' });
 		}
 	}
 	async getUsers(req, res) {
@@ -65,6 +66,31 @@ class authController {
 			const users = await User.find();
 
 			res.json(users);
+		} catch (error) {}
+	}
+
+	async getBookmarks(req, res) {
+
+		try {
+			const user = await User.findOne({ email });
+			if (!user) {
+				res.status(400).json({ message: 'Користувача не знайдено' });
+			}
+			const bookmarks = user.bookmarks;
+			return res.json({ bookmarks });
+		} catch (error) {}
+	}
+
+	
+	async getBookmarks(req, res) {
+		const { email } = req.body;
+		try {
+			const user = await User.findOne({ email });
+			if (!user) {
+				res.status(400).json({ message: 'Користувача не знайдено' });
+			}
+			const uBookmarks = user.bookmarks;
+			return res.json({ uBookmarks });
 		} catch (error) {}
 	}
 }

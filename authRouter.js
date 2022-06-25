@@ -15,5 +15,7 @@ router.post(
 );
 router.post('/login', authController.login);
 router.get('/users', roleMiddleware(['ADMIN']), authController.getUsers);
+router.post('/bookmarks', authController.getBookmarks);
+
 
 module.exports = router;
